@@ -47,4 +47,4 @@ CMD ["/entrypoint.sh", "runsvdir", "-P", "/etc/runit/services"]
 # al momento 20180313 è necessario alpine:edge ma rsyslog da un errore di firma
 #CMD ["/entrypoint.sh", "postfix", "start-fg"]
 
-ENV APP_VER
+ENV APP_VER "3.3.0-17"

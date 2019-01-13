@@ -1,50 +1,77 @@
-FROM alpine:3.8
+FROM debian:buster-slim
 
 MAINTAINER Ugo Viti <ugo.viti@initzero.it>
 
-ENV APP      "Postfix Mail Transport Agent"
-ENV APP_NAME "postfix"
+ENV APP_NAME        "postfix"
+ENV APP_DESCRIPTION "Postfix Mail Transport Agent"
 
-RUN set -x \
-  && apk upgrade --update --no-cache \
-  && apk add \
-	tini \
-	bash \
-	runit \
-	socklog \
-	ca-certificates \
-	postfix \
-	cyrus-sasl \
-	cyrus-sasl-crammd5 \
-	cyrus-sasl-digestmd5 \
-	heirloom-mailx \
- && rm -rf /var/cache/apk/* /tmp/*
+# debian specific
+ENV DEBIAN_FRONTEND noninteractive
 
-# rsyslog config
-#RUN sed 's/mail.*/mail.info \/dev\/stdout/' -i /etc/rsyslog.conf
+RUN set -xe \
+  && apt-get update && apt-get upgrade -y \
+  && apt-get install -y --no-install-recommends \
+    bash \
+    tini \
+    tar \
+    gzip \
+    bzip2 \
+    xz-utils \
+    less \
+    procps \
+    net-tools \
+    iputils-ping \
+    runit \
+    file \
+    curl \
+  	ca-certificates \
+  	postfix \
+  	libterm-readline-perl-perl \
+  	libsasl2-2 \
+  	libsasl2-modules \
+  	bsd-mailx \
+  	pmailq \
+    opendkim \
+    opendkim-tools \
+  && update-ca-certificates \
+  # install socklog from debian 8
+  && curl -fSL --connect-timeout 30 http://archive.debian.org/debian/pool/main/s/socklog/socklog_2.1.0-8_amd64.deb -o socklog_2.1.0-8_amd64.deb \
+  && dpkg -i socklog_2.1.0-8_amd64.deb \
+  && rm -f socklog_2.1.0-8_amd64.deb \
+  # cleanup system
+  && : "---------- Removing build dependencies and clean temporary files ----------" \
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/* /tmp/*
 
 # postfix config
-RUN mkdir -p /var/spool/postfix/ \
- && mkdir -p /var/spool/postfix/pid \
- && chown root: /var/spool/postfix/ \
- && chown root: /var/spool/postfix/pid 
+#RUN mkdir -p /var/spool/postfix/ \
+# && mkdir -p /var/spool/postfix/pid \
+# && chown root: /var/spool/postfix/ \
+# && chown root: /var/spool/postfix/pid
 
-# add files to container
-ADD Dockerfile /
-ADD filesystem /
+# postfix config
+RUN set -xe \
+  # fix permissions
+  && sed '/^\$manpage_directory/d' -i /etc/postfix/postfix-files \
+  # disable chroot configuration
+  && echo "$(awk '$5=="y" {$5="n"}1' OFS="\t" /etc/postfix/master.cf)" > /etc/postfix/master.cf \
+  && postfix set-permissions \
+  && postfix check
 
 # define volumes
-VOLUME	[ "/var/spool/postfix", "/etc/postfix" ]
+VOLUME ["/var/lib/postfix", "/var/mail", "/var/spool/postfix", "/etc/opendkim/keys", "/etc/postfix"]
 
 # exposed ports
 EXPOSE 25/TCP 465/TCP 587/TCP
 
-# init
-ENTRYPOINT ["tini", "-g", "--"]
-CMD ["/entrypoint.sh", "runsvdir", "-P", "/etc/runit/services"]
+# container pre-entrypoint variables
+ENV MULTISERVICE    "true"
+ENV ENTRYPOINT_TINI "true"
+ENV UMASK           0022
 
-# in futuro con postfix >= 3.3.0 è stato aggiunto il supporto a docker nativo per girare in foreground
-# al momento 20180313 è necessario alpine:edge ma rsyslog da un errore di firma
-#CMD ["/entrypoint.sh", "postfix", "start-fg"]
+# add files to container
+ADD Dockerfile filesystem VERSION README.md /
 
-ENV APP_VER "3.3.0-17"
+# start the container process
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["postfix", "start-fg"]

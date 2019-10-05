@@ -2,9 +2,9 @@
 Production ready Mail Transport Agent Container using Postfix
 
 # Supported tags
--	`3.3.2-BUILD`, `3.3.2`, `3.3`, `3`, `latest`
+-	`3.4.5-BUILD`, `3.5.5`, `3.4`, `3`, `latest`
 
-Where **BUILD** is the build number (look into project [Tags](tags/) page to discover the latest BUILD NUMBER)
+Where **X** is the patch version number, and **BUILD** is the build number (look into project [Tags](/repository/docker/izdock/postfix/tags/) page to discover the latest versions)
 
 # Dockerfile
 - https://github.com/ugoviti/izdock/blob/master/postfix/Dockerfile

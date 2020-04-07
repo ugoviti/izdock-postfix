@@ -9,7 +9,7 @@ Production ready Mail Transport Agent Container using Postfix
 Where **X** is the patch version number, and **BUILD** is the build number (look into project [Tags](/repository/docker/izdock/postfix/tags/) page to discover the latest versions)
 
 # Dockerfile
-- https://github.com/ugoviti/izdock/blob/master/postfix/Dockerfile
+- https://github.com/ugoviti/izdock-postfix/blob/master/Dockerfile
 
 # Features
 - Small image footprint (based on **slim** version of [Linux Debian](/_/debian/) image)

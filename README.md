@@ -1,5 +1,3 @@
-[![Build Status](https://ci.initzero.it/api/badges/initzero/izdock-postfix/status.svg)](https://ci.initzero.it/initzero/izdock-postfix)
-
 # Description
 Production ready Mail Transport Agent Container using Postfix
 

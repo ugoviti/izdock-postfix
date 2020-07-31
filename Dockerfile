@@ -24,13 +24,13 @@ RUN set -xe \
     runit \
     file \
     curl \
-  	ca-certificates \
-  	postfix \
-  	libterm-readline-perl-perl \
-  	libsasl2-2 \
-  	libsasl2-modules \
-  	bsd-mailx \
-  	pmailq \
+    ca-certificates \
+    postfix \
+    libterm-readline-perl-perl \
+    libsasl2-2 \
+    libsasl2-modules \
+    bsd-mailx \
+    pmailq \
     opendkim \
     opendkim-tools \
   && update-ca-certificates \

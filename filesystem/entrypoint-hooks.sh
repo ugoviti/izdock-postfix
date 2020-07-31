@@ -190,10 +190,10 @@ sed -i -r -e 's/^#submission/submission/' "$file_master_cf"
 sed -i -r -e 's/^#smtps/smtps/' "$file_master_cf"
 
 if [ "$MULTISERVICE" = "false" ]; then
-  echo -n "--> Enabling postfix foreground start option"
+  echo "--> Enabling postfix foreground start option"
   # disable tini init manager for this container
   ENTRYPOINT_TINI="false"
-  #postconf syslog_name=docker
+  postconf syslog_name=docker
 fi
 
 [ -e "/etc/rc.local" ] && echo && echo "=> Executing /etc/rc.local" && /etc/rc.local

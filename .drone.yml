@@ -1,11 +1,8 @@
 kind: pipeline
-name: default
+name: postfix
 
 environment:
   APP_VER: 3.4.10
-  APP_VER_BUILD: ${DRONE_BUILD_NUMBER}
-  APP_BUILD_COMMIT: ${DRONE_COMMIT_SHA:0:7}
-  APP_BUILD_DATE: ${DRONE_BUILD_FINISHED}
 
 trigger:
   event:
@@ -23,8 +20,22 @@ volumes:
       path: /var/cache/drone/${DRONE_REPO}/${DRONE_STAGE_NAME}
 
 steps:
+- name: setup
+  image: alpine
+  commands:
+    - echo -e -n "$${APP_VER}-${DRONE_COMMIT_SHA:0:7}" > .tags
+    - echo -e -n ",$${APP_VER}-${DRONE_BUILD_NUMBER}" >> .tags
+    - echo -e -n ",$${APP_VER}" >> .tags
+    - echo -e -n ",$${APP_VER%.*}" >> .tags
+    - echo -e -n ",$${APP_VER%%.*}" >> .tags
+    - echo -e -n ",latest" >> .tags
+
 - name: build&publish
   image: plugins/docker
+  environment:
+    APP_VER_BUILD: "${DRONE_BUILD_NUMBER}"
+    APP_BUILD_COMMIT: "${DRONE_COMMIT_SHA:0:7}"
+    APP_BUILD_DATE: "${DRONE_BUILD_FINISHED}"
   settings:
     repo: izdock/postfix
     build_args_from_env:
@@ -36,13 +47,6 @@ steps:
       from_secret: DOCKER_USERNAME
     password:
       from_secret: DOCKER_PASSWORD
-    tags:
-      - latest
-      - ${DRONE_TAG}
-      - ${DRONE_TAG%.*}
-      - ${DRONE_TAG%%.*}
-      - ${DRONE_TAG}-${DRONE_BUILD_NUMBER}
-      - ${DRONE_COMMIT_SHA:0:7}
   volumes:
   - name: docker
     path: /var/lib/docker

@@ -5,6 +5,10 @@ MAINTAINER Ugo Viti <ugo.viti@initzero.it>
 ENV APP_NAME        "postfix"
 ENV APP_DESCRIPTION "Postfix Mail Transport Agent"
 
+# full app version
+ARG APP_VER
+ENV APP_VER "${APP_VER}"
+
 # debian specific
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -79,7 +83,6 @@ ARG APP_BUILD_COMMIT
 ARG APP_BUILD_DATE
 
 # define other build variables
-ENV APP_VER          "${APP_VER}"
 ENV APP_VER_BUILD    "${APP_VER_BUILD}"
 ENV APP_BUILD_COMMIT "${APP_BUILD_COMMIT}"
 ENV APP_BUILD_DATE   "${APP_BUILD_DATE}"

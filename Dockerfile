@@ -70,7 +70,7 @@ ENV ENTRYPOINT_TINI "true"
 ENV UMASK           0022
 
 # add files to container
-ADD Dockerfile filesystem VERSION README.md /
+ADD Dockerfile filesystem README.md /
 
 # start the container process
 ENTRYPOINT ["/entrypoint.sh"]

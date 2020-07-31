@@ -64,13 +64,25 @@ VOLUME ["/var/lib/postfix", "/var/mail", "/var/spool/postfix", "/etc/opendkim/ke
 # exposed ports
 EXPOSE 25/TCP 465/TCP 587/TCP
 
-# container pre-entrypoint variables
-ENV MULTISERVICE    "true"
-ENV ENTRYPOINT_TINI "true"
-ENV UMASK           0022
-
 # add files to container
 ADD Dockerfile filesystem README.md /
+
+# container pre-entrypoint variables
+ENV APP_RUNAS          ""
+ENV MULTISERVICE       "true"
+ENV ENTRYPOINT_TINI    "true"
+ENV UMASK              0002
+
+## CI args
+ARG APP_VER_BUILD
+ARG APP_BUILD_COMMIT
+ARG APP_BUILD_DATE
+
+# define other build variables
+ENV APP_VER          "${APP_VER}"
+ENV APP_VER_BUILD    "${APP_VER_BUILD}"
+ENV APP_BUILD_COMMIT "${APP_BUILD_COMMIT}"
+ENV APP_BUILD_DATE   "${APP_BUILD_DATE}"
 
 # start the container process
 ENTRYPOINT ["/entrypoint.sh"]

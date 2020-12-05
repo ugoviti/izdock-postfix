@@ -202,6 +202,9 @@ if [ "$MULTISERVICE" = "false" ]; then
   postconf syslog_name=docker
 fi
 
+# fix permissions
+chown nobody:nobody /var/log/mail
+
 [ -e "/etc/rc.local" ] && echo && echo "=> Executing /etc/rc.local" && /etc/rc.local
 }
 

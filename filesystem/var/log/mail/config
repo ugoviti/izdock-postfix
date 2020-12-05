@@ -1,4 +1,1 @@
-+
-+^mail\.
-/var/log/mail/mail.log
-1
++mail.*

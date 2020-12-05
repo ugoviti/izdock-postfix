@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /var/log
+/sbin/chpst -u nobody /sbin/svlogd /var/log/mail

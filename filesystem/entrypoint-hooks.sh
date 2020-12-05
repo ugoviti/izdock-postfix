@@ -203,7 +203,7 @@ if [ "$MULTISERVICE" = "false" ]; then
 fi
 
 # fix permissions
-chown nobody:nobody /var/log/mail
+chown nobody:nogroup /var/log/mail
 
 [ -e "/etc/rc.local" ] && echo && echo "=> Executing /etc/rc.local" && /etc/rc.local
 }

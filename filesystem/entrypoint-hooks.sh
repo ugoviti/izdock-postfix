@@ -26,6 +26,9 @@
 : ${relayhost_password:=""}
 : ${relayhost_username:=""}
 
+# by default, to avoid loosing email enable soft_bounce (warning: can cause high queued mails)
+: ${soft_bounce:="yes"}
+
 ## message specific configuration
 : ${mailbox_size_limit:=0}
 : ${message_size_limit:=8000000}
@@ -112,6 +115,9 @@ postconf -e relay_domains="${relay_domains}"
 postconf -e smtp_tls_security_level="${smtp_tls_security_level}"
 
 postconf -e smtpd_tls_security_level="${smtpd_tls_security_level}"
+
+# manage bounce behaviour
+postconf -e soft_bounce="${soft_bounce}"
 
 # disable SMTPUTF8, because libraries (ICU) are missing in alpine
 postconf -e smtputf8_enable="${smtputf8_enable}"

@@ -91,6 +91,7 @@ Follow all usable runtime environment variables with default values
 
 ## smtp configuration
 ```
+: ${soft_bounce:="yes"}
 : ${smtputf8_enable:="no"}
 : ${smtp_sasl_auth_enable:="yes"}
 : ${smtp_sasl_security_options:="noanonymous"}

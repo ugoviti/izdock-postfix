@@ -1,3 +1,3 @@
 #!/bin/sh
 cd /var/log
-chpst -u nobody svlogd /var/log/mail
+chpst -u nobody svlogd /proc/self/fd/2 /var/log/mail

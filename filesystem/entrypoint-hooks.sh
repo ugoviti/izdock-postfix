@@ -202,8 +202,10 @@ if [ "$MULTISERVICE" = "false" ]; then
   postconf syslog_name=docker
 fi
 
-# fix permissions
-chown nobody:nogroup /var/log/mail
+# configure socklog loggin to file and fix permissions
+[ ! -e "/var/log/mail" ] && mkdir -p /var/log/mail
+[ ! -e "/var/log/mail/config" ] && echo -e '+mail.*\ne*' > /var/log/mail/config
+chown nobody:nogroup -R /var/log/mail
 
 [ -e "/etc/rc.local" ] && echo && echo "=> Executing /etc/rc.local" && /etc/rc.local
 }

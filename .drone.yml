@@ -2,7 +2,7 @@ kind: pipeline
 name: postfix
 
 environment:
-  APP_VER: 3.4.10
+  APP_VER: 3.4.14
 
 trigger:
   event:

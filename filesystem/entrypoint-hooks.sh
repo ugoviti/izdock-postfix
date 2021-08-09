@@ -13,10 +13,10 @@
 : ${aliases_root:="root"}
 
 # local domain configuration
-: ${mydomain:="$HOSTNAME"}
-: ${myhostname:="$HOSTNAME"}
-: ${mydestination:="$myhostname, localhost.$mydomain, localhost"}
-: ${myorigin:="$mydomain"}
+: ${mydomain:="local"}
+: ${myhostname:="$HOSTNAME.\$mydomain"}
+: ${mydestination:="\$myhostname, localhost.\$mydomain, localhost"}
+: ${myorigin:="\$myhostname"}
 : ${mynetworks:="127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"}
 : ${relay_domains:=""}
 : ${allowed_senders_domains:=""}
@@ -85,11 +85,6 @@ postconf -e header_checks="regexp:${file_header_checks}"
 # update aliases database. It's not used, but postfix complains if the .db file is missing
 echo "root: ${aliases_root}" >> "$file_aliases"
 postalias "$file_aliases"
-
-# valorize default variables
-mydomain="${mydomain}"
-myhostname="${myhostname}"
-myorigin="${myorigin}"
 
 # set external domain
 postconf -e mydomain="${mydomain}"

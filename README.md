@@ -10,7 +10,7 @@ Where **X** is the patch version number, and **BUILD** is the build number (look
 - https://github.com/ugoviti/izdock-postfix/blob/master/Dockerfile
 
 # Features
-- Small image footprint (based on **slim** version of [Linux Debian](/_/debian/) image)
+- Small image footprint (based on **slim** version of [Linux Debian 11](/_/debian/) image)
 - Many customizable variables to use
 - Using [tini](https://github.com/krallin/tini) as init process integrated with runit as process manager and socklog as syslog server for very small image footprint
 - Switchable init process using ```MULTISERVICE``` variable

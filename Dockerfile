@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 MAINTAINER Ugo Viti <ugo.viti@initzero.it>
 

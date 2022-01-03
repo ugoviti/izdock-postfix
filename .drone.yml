@@ -2,7 +2,7 @@ kind: pipeline
 name: postfix
 
 environment:
-  APP_VER: 3.4.14
+  APP_VER: 3.5.6
 
 trigger:
   event:
@@ -50,3 +50,13 @@ steps:
   volumes:
   - name: docker
     path: /var/lib/docker
+
+- name: notify
+  image: plugins/matrix
+  settings:
+    homeserver: https://quantico.in
+    roomid: UCuIdxzWsiiboEXriU:quantico.in
+    username:
+      from_secret: MATRIX_USERNAME
+    password:
+      from_secret: MATRIX_PASSWORD

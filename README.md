@@ -114,6 +114,19 @@ COPY ./master.cf /etc/postfix/master.cf
 COPY ./main.cf /etc/postfix/main.cf
 ```
 
+### Create a `Dockerfile` in your project
+
+```dockerfile
+FROM izdock/postfix:latest
+```
+
+Then, run the commands to build and run the Docker image:
+
+```console
+$ docker build --pull --rm --build-arg APP_VER=3.5.6 -t postfix:3.5.6 .
+$ docker run --rm -it -e ENTRYPOINT_TINI=false -e MULTISERVICE=false -p 2525:25 -p 2465:465 --name postfix postfix:3.5.6
+```
+
 # Quick reference
 
 -	**Where to get help**:

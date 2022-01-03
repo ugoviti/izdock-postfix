@@ -193,8 +193,9 @@ sed -i -r -e 's/^#smtps/smtps/' "$file_master_cf"
 if [ "$MULTISERVICE" = "false" ]; then
   echo "--> Enabling postfix foreground start option"
   # disable tini init manager for this container
-  ENTRYPOINT_TINI="false"
-  postconf syslog_name=docker
+  #ENTRYPOINT_TINI="false"
+  postconf -e syslog_name="docker"
+  postconf -e maillog_file="/dev/stdout"
 fi
 
 echo "--> Creating postfix spool directory structure"

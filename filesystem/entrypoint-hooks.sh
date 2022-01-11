@@ -38,6 +38,7 @@
 : ${smtp_sasl_auth_enable:="yes"}
 : ${smtp_sasl_security_options:="noanonymous"}
 : ${smtp_tls_security_level:="may"}
+: ${smtp_tls_wrappermode:="no"}
 : ${smtpd_tls_security_level:="none"}
 : ${smtpd_delay_reject:="yes"}
 : ${smtpd_helo_required:="yes"}
@@ -108,6 +109,8 @@ postconf -e mynetworks="${mynetworks}"
 postconf -e relay_domains="${relay_domains}"
 
 postconf -e smtp_tls_security_level="${smtp_tls_security_level}"
+
+postconf -e smtp_tls_wrappermode="${smtp_tls_wrappermode}"
 
 postconf -e smtpd_tls_security_level="${smtpd_tls_security_level}"
 

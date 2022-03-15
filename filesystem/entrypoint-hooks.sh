@@ -21,10 +21,14 @@
 : ${relay_domains:=""}
 : ${allowed_senders_domains:=""}
 
-# external smart host configuration
+## external default smart host configuration
 : ${relayhost:=""}
 : ${relayhost_password:=""}
 : ${relayhost_username:=""}
+
+## domain specific smart host configuration
+#: ${transport:="example.com smtp:[smtp.example1.com]:587;otherdomain.it smtp:[smtp.example2.com]:25"}
+: ${transport:="example.com smtp:[smtp.example1.com]:587;otherdomain.it smtp:[smtp.example2.com]:25"}
 
 # by default, to avoid loosing email enable soft_bounce (warning: can cause high queued mails)
 : ${soft_bounce:="yes"}

@@ -1,6 +1,6 @@
 FROM debian:bullseye-slim
 
-MAINTAINER Ugo Viti <ugo.viti@initzero.it>
+LABEL maintainer="Ugo Viti <u.viti@wearequantico.it>"
 
 ENV APP_NAME        "postfix"
 ENV APP_DESCRIPTION "Postfix Mail Transport Agent"

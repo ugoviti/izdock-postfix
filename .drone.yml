@@ -1,18 +1,18 @@
 kind: pipeline
+type: docker
 name: postfix
 
 environment:
   APP_VER: 3.5.6
+  APP_VER_BUILD: "${DRONE_BUILD_NUMBER}"
+  APP_BUILD_COMMIT: "${DRONE_COMMIT_SHA:0:7}"
+  APP_BUILD_DATE: "${DRONE_BUILD_FINISHED}"
 
 trigger:
   event:
   - push
   branch:
   - master
-
-platform:
-  os: linux
-  arch: amd64
 
 concurrency:
   limit: 1
@@ -47,12 +47,14 @@ steps:
     - echo -e -n ",$${APP_VER%%.*}" >> .tags
     - echo -e -n ",latest" >> .tags
 
+- name: print-env
+  image: alpine/git
+  commands:
+  - set
+
 - name: build-docker
   image: plugins/docker
-  environment:
-    APP_VER_BUILD: "${DRONE_BUILD_NUMBER}"
-    APP_BUILD_COMMIT: "${DRONE_COMMIT_SHA:0:7}"
-    APP_BUILD_DATE: "${DRONE_BUILD_FINISHED}"
+  privileged: true
   settings:
     repo: izdock/postfix
     build_args_from_env:
@@ -60,17 +62,40 @@ steps:
     - APP_VER_BUILD
     - APP_BUILD_COMMIT
     - APP_BUILD_DATE
+    storage_path: /drone/docker
     username:
       from_secret: DOCKER_USERNAME
     password:
       from_secret: DOCKER_PASSWORD
+    # tags:
+    #   - latest
+    #   - ${DRONE_TAG}
+    #   - ${DRONE_TAG%.*}
+    #   - ${DRONE_TAG%%.*}
+    #   - ${DRONE_TAG}-${DRONE_BUILD_NUMBER}
+    #   #- ${DRONE_COMMIT_SHA:0:7}
+    platforms:
+      - linux/amd64
+#      - linux/arm64
+
+- name: rebuild-cache
+  image: drillster/drone-volume-cache
+  volumes:
+  - name: cache
+    path: /cache
+  settings:
+    rebuild: true
+    mount:
+    - /drone/docker
 
 - name: notify
-  image: plugins/matrix
+  image: spotlightkid/drone-matrixchat-notify
   settings:
     homeserver: https://quantico.in
-    roomid: UCuIdxzWsiiboEXriU:quantico.in
-    username:
-      from_secret: MATRIX_USERNAME
+    roomid: "!UCuIdxzWsiiboEXriU:quantico.in"
+    userid: "@gitbot:quantico.in"
     password:
       from_secret: MATRIX_PASSWORD
+    markdown: 'yes'
+    template: |
+      [`${DRONE_REPO}`](${DRONE_BUILD_LINK}) build:[`#${DRONE_BUILD_NUMBER}`] tag:[`${DRONE_TAG}`] status:[**${DRONE_BUILD_STATUS}**]

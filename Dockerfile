@@ -69,7 +69,7 @@ VOLUME ["/var/lib/postfix", "/var/mail", "/var/spool/postfix", "/etc/opendkim/ke
 EXPOSE 25/TCP 465/TCP 587/TCP
 
 # add files to container
-ADD Dockerfile filesystem README.md /
+ADD Dockerfile filesystem/* README.md /
 
 # container pre-entrypoint variables
 ENV APP_RUNAS          ""

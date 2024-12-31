@@ -18,6 +18,7 @@
 : ${mydestination:="\$myhostname, localhost.\$mydomain, localhost"}
 : ${myorigin:="\$myhostname"}
 : ${mynetworks:="127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"}
+: ${inet_protocols:="ipv4"}
 : ${relay_domains:=""}
 : ${allowed_senders_domains:=""}
 

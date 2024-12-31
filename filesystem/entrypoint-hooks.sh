@@ -50,7 +50,8 @@
 : ${smtpd_helo_restrictions:="permit_mynetworks,reject_invalid_helo_hostname,permit"}
 : ${smtpd_restriction_classes:="allowed_domains_only"}
 : ${allowed_domains_only:="permit_mynetworks, reject_non_fqdn_sender reject"}
-: ${smtpd_recipient_restrictions:="reject_non_fqdn_recipient,reject_unknown_recipient_domain,reject_unverified_recipient"}
+#: ${smtpd_recipient_restrictions:="reject_non_fqdn_recipient,reject_unknown_recipient_domain,reject_unverified_recipient"}
+: ${smtpd_recipient_restrictions:="reject_non_fqdn_recipient"}
 
 ## app generic variables
 # detect current operating system
@@ -178,20 +179,20 @@ fi
 
 # split with space
 if [ ! -z "$allowed_senders_domains" ]; then
-	echo -n "- Setting up 'allowed_senders domains':"
-	rm -f $file_allowed_senders $file_allowed_senders.db > /dev/null
-	touch $file_allowed_senders
-	for i in $allowed_senders_domains; do
-		echo -n " $i"
-		echo -e "$i\tOK" >> $file_allowed_senders
-	done
-	echo
-	postmap $file_allowed_senders
-	postconf -e smtpd_restriction_classes="${smtpd_restriction_classes}"
-	postconf -e allowed_domains_only="${allowed_domains_only}"
-	postconf -e smtpd_recipient_restrictions="${smtpd_recipient_restrictions},check_sender_access hash:$file_allowed_senders,reject"
+  echo -n "- Setting up 'allowed_senders domains':"
+  rm -f $file_allowed_senders $file_allowed_senders.db > /dev/null
+  touch $file_allowed_senders
+  for i in $allowed_senders_domains; do
+    echo -n " $i"
+    echo -e "$i\tOK" >> $file_allowed_senders
+  done
+  echo
+  postmap $file_allowed_senders
+  postconf -e smtpd_restriction_classes="${smtpd_restriction_classes}"
+  postconf -e allowed_domains_only="${allowed_domains_only}"
+  postconf -e smtpd_recipient_restrictions="${smtpd_recipient_restrictions},check_sender_access hash:$file_allowed_senders,reject"
 else
-	postconf -# smtpd_restriction_classes
+  postconf -# smtpd_restriction_classes
   postconf -e smtpd_recipient_restrictions="${smtpd_recipient_restrictions}"
 fi
 

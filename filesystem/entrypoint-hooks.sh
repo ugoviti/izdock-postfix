@@ -106,6 +106,9 @@ postconf -e mydestination="${mydestination}"
 # define allowed networks to use this mta as mail server
 postconf -e mynetworks="${mynetworks}"
 
+# define allowed inet protocols (all|ipv4|ipv6)
+postconf -e inet_protocols="${inet_protocols}"
+
 # docker syslog management (verificare quando postfix 3.3.1)
 #postconf -e syslog_name="${syslog_name:-postfix}"
 

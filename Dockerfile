@@ -73,7 +73,7 @@ ADD Dockerfile filesystem/* README.md /
 
 # container pre-entrypoint variables
 ENV APP_RUNAS          ""
-ENV MULTISERVICE       "true"
+ENV MULTISERVICE       "false"
 ENV ENTRYPOINT_TINI    "true"
 ENV UMASK              0002
 

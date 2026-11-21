@@ -7,10 +7,11 @@ Production ready Mail Transport Agent Container using Postfix
 Where **X** is the patch version number, and **BUILD** is the build number (look into project [Tags](/repository/docker/izdock/postfix/tags/) page to discover the latest versions)
 
 # Dockerfile
-- https://github.com/ugoviti/izdock-postfix/blob/master/Dockerfile
+- https://github.com/ugoviti/izdock-postfix/blob/main/Dockerfile
+- versions (Postfix, Debian base image): [versions.env](https://github.com/ugoviti/izdock-postfix/blob/main/versions.env), the single source of truth of the build
 
 # Features
-- Small image footprint (based on **slim** version of [Linux Debian 11](/_/debian/) image)
+- Small image footprint (based on **slim** version of [Linux Debian 13 trixie](/_/debian/) image, pinned by digest)
 - Many customizable variables to use
 - Using [tini](https://github.com/krallin/tini) as init process integrated with runit as process manager and socklog as syslog server for very small image footprint
 - Switchable init process using ```MULTISERVICE``` variable
@@ -45,10 +46,12 @@ Follow all usable runtime environment variables with default values
 
 ## multiservice management
 ```
-: ${MULTISERVICE:="true"}
+: ${MULTISERVICE:="false"}
 ```
-  * **true** = use runit as multi service process manager and start socklog as syslog server
-  * **false** = start postfix in foreground (using the new 3.3.x ```start-fg``` command)
+  * **false** (default) = start postfix in foreground (```postfix start-fg```), the mail log goes to stdout
+  * **true** = use runit as multi service process manager and start socklog as syslog server:
+    the mail log is written by svlogd into ```/var/log/mail/current``` (rotated by svlogd) and copied
+    to stderr, so a log shipper sidecar (eg. fluent-bit) can read the file sharing ```/var/log/mail```
 
 ## postfix config files
 ```
@@ -115,7 +118,7 @@ Follow all usable runtime environment variables with default values
 To customize the configuration just `COPY` your custom configuration in `/etc/postfix/master.cf` and `/etc/postfix/main.cf`.
 
 ```dockerfile
-FROM izdock/tomcat
+FROM izdock/postfix
 COPY ./master.cf /etc/postfix/master.cf
 COPY ./main.cf /etc/postfix/main.cf
 ```
@@ -129,9 +132,26 @@ FROM izdock/postfix:latest
 Then, run the commands to build and run the Docker image:
 
 ```console
-$ docker build --pull --rm --build-arg APP_VER=3.10.13 -t postfix:3.10.13 .
-$ docker run --rm -it -e ENTRYPOINT_TINI=false -e MULTISERVICE=false -p 2525:25 -p 2465:465 --name postfix postfix:3.10.13
+$ docker build --pull --rm -t postfix:local .
+$ docker run --rm -it -p 2525:25 -p 2465:465 --name postfix postfix:local
 ```
+
+# Build this image
+
+The versions come from [versions.env](versions.env): ```APP_VER``` is the Postfix version of the
+Debian package, the base image is ```debian:<DEBIAN_CODENAME>-slim@<DEBIAN_DIGEST>```.
+
+```console
+$ tools/build.sh                      # izdock/postfix:local, the same build args as CI (DOCKER=podman supported)
+$ docker run -i --rm --entrypoint "" -e APP_VER_EXPECTED=<APP_VER> izdock/postfix:local bash -s < .gitea/actions/build-push/verify-image.sh
+$ .gitea/actions/build-push/smoke-test.sh izdock/postfix:local
+$ tools/make-updates.sh               # new Debian digest or Postfix version available?
+```
+
+CI (Gitea Actions, ```.gitea/workflows```): ```postfix-build``` lints, builds, verifies and publishes
+every push to ```main``` (and rebuilds every Monday for the OS security updates), ```postfix-publish```
+publishes again a build already verified, ```postfix-updates``` opens every Sunday a pull request
+with the new versions of ```versions.env```.
 
 # Quick reference
 

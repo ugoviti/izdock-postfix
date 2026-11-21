@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:trixie-slim
 
 LABEL maintainer="Ugo Viti <u.viti@wearequantico.it>"
 
@@ -37,11 +37,8 @@ RUN set -xe \
     pmailq \
     opendkim \
     opendkim-tools \
+    socklog \
   && update-ca-certificates \
-  # install socklog from debian 8
-  && curl -fSL --connect-timeout 30 http://archive.debian.org/debian/pool/main/s/socklog/socklog_2.1.0-8_amd64.deb -o socklog_2.1.0-8_amd64.deb \
-  && dpkg -i socklog_2.1.0-8_amd64.deb \
-  && rm -f socklog_2.1.0-8_amd64.deb \
   # cleanup system
   && : "---------- Removing build dependencies and clean temporary files ----------" \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
@@ -69,11 +66,14 @@ VOLUME ["/var/lib/postfix", "/var/mail", "/var/spool/postfix", "/etc/opendkim/ke
 EXPOSE 25/TCP 465/TCP 587/TCP
 
 # add files to container
-ADD Dockerfile filesystem/* README.md /
+# NB. COPY filesystem/ / keeps the directory layout (etc/service, var/log/mail, usr/local/sbin):
+# with "filesystem/*" every directory content was copied into / losing the parent directories
+COPY Dockerfile README.md /
+COPY filesystem/ /
 
 # container pre-entrypoint variables
 ENV APP_RUNAS          ""
-ENV MULTISERVICE       "false"
+ENV MULTISERVICE       "true"
 ENV ENTRYPOINT_TINI    "true"
 ENV UMASK              0002
 

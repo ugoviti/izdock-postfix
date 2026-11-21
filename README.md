@@ -2,7 +2,7 @@
 Production ready Mail Transport Agent Container using Postfix
 
 # Supported tags
--	`3.5.X-BUILD`, `3.5.X`, `3.5`, `3`, `latest`
+-	`3.10.X-BUILD`, `3.10.X`, `3.10`, `3`, `latest`
 
 Where **X** is the patch version number, and **BUILD** is the build number (look into project [Tags](/repository/docker/izdock/postfix/tags/) page to discover the latest versions)
 
@@ -129,8 +129,8 @@ FROM izdock/postfix:latest
 Then, run the commands to build and run the Docker image:
 
 ```console
-$ docker build --pull --rm --build-arg APP_VER=3.5.6 -t postfix:3.5.6 .
-$ docker run --rm -it -e ENTRYPOINT_TINI=false -e MULTISERVICE=false -p 2525:25 -p 2465:465 --name postfix postfix:3.5.6
+$ docker build --pull --rm --build-arg APP_VER=3.10.13 -t postfix:3.10.13 .
+$ docker run --rm -it -e ENTRYPOINT_TINI=false -e MULTISERVICE=false -p 2525:25 -p 2465:465 --name postfix postfix:3.10.13
 ```
 
 # Quick reference

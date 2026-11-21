@@ -54,6 +54,9 @@ RUN : "os update ${OS_UPDATE_STAMP}" \
     opendkim \
     opendkim-tools \
   && update-ca-certificates \
+  # the runit postinst makes /etc/service a symlink (to /etc/runit/runsvdir/current): BuildKit
+  # cannot COPY rootfs/etc/service over it, and runsvdir -P /etc/service must see only our services
+  && { [ ! -L /etc/service ] || rm -f /etc/service; } && mkdir -p /etc/service \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/* /tmp/*
 

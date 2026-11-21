@@ -41,6 +41,11 @@ cmd tini runsvdir runsv chpst socklog svlogd postfix postconf postmap postalias 
 # postfix configuration of the image
 if postfix check >/dev/null 2>&1; then ok "postfix check"; else ko "postfix check: $(postfix check 2>&1 | tail -1)"; fi
 
+# /etc/service: a real directory with only the services of rootfs/ (not the symlink of the runit package)
+if [ -d /etc/service ] && [ ! -L /etc/service ]; then ok "/etc/service is a directory"; else ko "/etc/service is not a directory ($(ls -ld /etc/service 2>&1))"; fi
+svc=$(find /etc/service -mindepth 1 -maxdepth 1 -printf '%f\n' | sort | paste -sd' ' -)
+if [ "$svc" == "postfix socklog" ]; then ok "runit services: $svc"; else ko "runit services: '$svc', expected 'postfix socklog'"; fi
+
 # files of rootfs/ at their path: with a wrong COPY (eg. "filesystem/*") the directory
 # contents land in / (/service, /log, /local) and runit finds no service
 for f in /etc/service/postfix/run /etc/service/socklog/run /etc/service/socklog/log/run /usr/local/sbin/pfdel; do
